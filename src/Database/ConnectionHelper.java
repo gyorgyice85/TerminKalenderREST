@@ -14,12 +14,9 @@ public class ConnectionHelper {
         {
             String driver = null;
             try {
-                Class.forName("com.mysql.jdbc.Driver");
-                url = "jdbc:mysql://localhost/directory?user=root";
-                ResourceBundle bundle = ResourceBundle.getBundle("cellar");
-                driver = bundle.getString("jdbc.driver");
-                Class.forName(driver);
-                url=bundle.getString("jdbc.url");
+                Class.forName("org.sqlite.JDBC");
+                url = "jdbc:sqlite:db/TerminKalender.sqlite";
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
