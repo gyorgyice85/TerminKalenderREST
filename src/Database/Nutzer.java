@@ -2,6 +2,8 @@ package Database;
 
 import com.sun.xml.internal.bind.v2.model.core.ID;
 
+import java.util.List;
+
 public class Nutzer{
 
     private int id;
@@ -39,5 +41,29 @@ public class Nutzer{
 
     public void setNachname(String nachname) {
         this.nachname = nachname;
+    }
+
+    /**
+     * Methode um die Termine, in denen der Nutzer Teilnehmer ist, zurueckzugeben
+     * @return Liste der Termine
+     */
+    public List<Termin> getTermine() {
+
+        TerminDAO termin = new TerminDAO();
+
+        return termin.getTermine(this);
+
+    }
+
+    /**
+     * Methode um die Termine, zu denen der Nutzer eingeladet ist, zurueckzugeben
+     * @return Liste der Termine
+     */
+    public List<Termin> getEinladungen() {
+
+        EinladungDAO einladung = new EinladungDAO();
+
+        return einladung.getEinladungen(this);
+
     }
 }
