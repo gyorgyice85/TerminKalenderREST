@@ -144,8 +144,37 @@ public class TerminDAO {
         }
     }
 
+    /**
+     * Methode um Termine des Nutzers zurückzugeben
+     * @param nutzer Teilnehmer
+     * @return List<Termin> Liste der Termine
+     */
+    public List<Termin> getTermine(Nutzer nutzer){
+        List<Termin> list = new ArrayList<Termin>();
+        Connection c = null;
+        TerminDAO termin = new TerminDAO();
+        String sql = "SELECT TERMIN.* FROM TERMIN JOIN TEILNEHMER WHERE " +
+                "Teilnehmer.TerminID = ID AND NutzerID = ?";
 
-    protected Termin processRow(ResultSet rs) throws SQLException {
+        try {
+            c = ConnectionHelper.getConnection();
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setInt(1, nutzer.getId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(termin.processRow(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionHelper.close(c);
+        }
+        return list;
+    }
+
+
+    Termin processRow(ResultSet rs) throws SQLException {
         Termin termin = new Termin();
         termin.setId(rs.getInt("ID"));
         termin.setBeschreibung(rs.getString("Beschreibung"));
