@@ -4,15 +4,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+public class TerminDAO {
 
 
-public class NutzerDAO {
-
-
-    public List<Nutzer> findAll() {
-        List<Nutzer> list = new ArrayList<Nutzer>();
+    public List<Termin> findAll() {
+        List<Termin> list = new ArrayList<Termin>();
         Connection c = null;
-        String sql = "SELECT * FROM Nutzer";
+        String sql = "SELECT * FROM Termin";
         try {
             c = ConnectionHelper.getConnection();
             Statement s = c.createStatement();
@@ -30,17 +28,16 @@ public class NutzerDAO {
     }
 
 
-    public List<Nutzer> findByName(String vorname, String nachname) {
-        List<Nutzer> list = new ArrayList<Nutzer>();
+    public List<Termin> findByBeschreibung(String beschreibung) {
+        List<Termin> list = new ArrayList<Termin>();
         Connection c = null;
-        String sql = "SELECT * FROM Nutzer WHERE Vorname = ? AND Nachname = ?";
+        String sql = "SELECT * FROM Termin WHERE Beschreibung = ?";
         try {
             c = ConnectionHelper.getConnection();
             // prepareStatement creates a PreparedStatement object for sending
             // parameterized SQL statements to the database.
             PreparedStatement ps = c.prepareStatement(sql);
-            ps.setString(1, "'%" + vorname + "%'");
-            ps.setString(2,"'%" + nachname + "%'");
+            ps.setString(1, "'%" + beschreibung + "%'");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(processRow(rs));
@@ -54,9 +51,9 @@ public class NutzerDAO {
         return list;
     }
 
-    public Nutzer findById(int id) {
-        String sql = "SELECT * FROM Nutzer WHERE id = ?";
-        Nutzer nutzer = null;
+    public Termin findById(int id) {
+        String sql = "SELECT * FROM Termin WHERE id = ?";
+        Termin termin = null;
         Connection c = null;
         try {
             c = ConnectionHelper.getConnection();
@@ -64,7 +61,7 @@ public class NutzerDAO {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                nutzer = processRow(rs);
+                termin = processRow(rs);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,48 +69,53 @@ public class NutzerDAO {
         } finally {
             ConnectionHelper.close(c);
         }
-        return nutzer;
+        return termin;
     }
 
 
-    public Nutzer create(Nutzer nutzer) {
+   //
+    public Termin create(Termin termin) {
         Connection c = null;
         PreparedStatement ps = null;
         try {
             c = ConnectionHelper.getConnection();
-            ps = c.prepareStatement("INSERT INTO Nutzer(Vorname, Nachname) VALUES (?, ?)",
+            ps = c.prepareStatement("INSERT INTO Termin (Beschreibung, Ort, Von, Bis) VALUES (?, ?, ?, ?)",
                     new String[] { "ID" });
-            ps.setString(1, nutzer.getVorname());
-            ps.setString(2, nutzer.getNachname());
+            ps.setString(1, termin.getBeschreibung());
+            ps.setString(2, termin.getOrt());
+            ps.setTimestamp(3, termin.getVon());
+            ps.setTimestamp(4, termin.getBis());
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             // Update the id in the returned object. This is important as this value must be returned to the client.
             int id = rs.getInt(1);
-            nutzer.setId(id);
+            termin.setId(id);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
             ConnectionHelper.close(c);
         }
-        return nutzer;
+        return termin;
     }
 
-    public Nutzer save(Nutzer nutzer) {
-        return nutzer.getId() > 0 ? update(nutzer) : create(nutzer);
+    public Termin save(Termin termin) {
+        return termin.getId() > 0 ? update(termin) : create(termin);
     }
 
 
-    public Nutzer update(Nutzer nutzer) {  //??
+    public Termin update(Termin termin) {
         Connection c = null;
         try {
             c = ConnectionHelper.getConnection();
             PreparedStatement ps = c.prepareStatement
-                    ("UPDATE Nutzer SET Vorname =?, Nachname =? WHERE id =?");
-            ps.setString(1, nutzer.getVorname());
-            ps.setString(2, nutzer.getNachname());
-            ps.setInt(3, nutzer.getId());
+                    ("UPDATE Termin SET Beschreibung =?, Ort =?, Von =?, Bis =? WHERE id =?");
+            ps.setString(1, termin.getBeschreibung());
+            ps.setString(2, termin.getOrt());
+            ps.setTimestamp(3, termin.getVon());
+            ps.setTimestamp(4, termin.getBis());
+            ps.setInt(5, termin.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -121,17 +123,17 @@ public class NutzerDAO {
         } finally {
             ConnectionHelper.close(c);
         }
-        return nutzer;
+        return termin;
     }
 
     /**
-     @return whether deleting the row was successful
-     */
+    @return whether deleting the row was successful
+    */
     public boolean remove(int id) {
         Connection c = null;
         try {
             c = ConnectionHelper.getConnection();
-            PreparedStatement ps = c.prepareStatement("DELETE FROM Nutzer WHERE id=?");
+            PreparedStatement ps = c.prepareStatement("DELETE FROM Termin WHERE id=?");
             ps.setInt(1, id);
             int count = ps.executeUpdate();
             return count == 1;
@@ -143,17 +145,45 @@ public class NutzerDAO {
         }
     }
 
+    /**
+     * Methode um Termine des Nutzers zurückzugeben
+     * @param nutzer Teilnehmer
+     * @return List<Termin> Liste der Termine
+     */
+    public List<Termin> getTermine(Nutzer nutzer){
+        List<Termin> list = new ArrayList<Termin>();
+        Connection c = null;
+        TerminDAO termin = new TerminDAO();
+        String sql = "SELECT TERMIN.* FROM TERMIN JOIN TEILNEHMER WHERE " +
+                "Teilnehmer.TerminID = ID AND NutzerID = ?";
 
-    Nutzer processRow(ResultSet rs) throws SQLException {
-        Nutzer nutzer = new Nutzer();
-        nutzer.setId(rs.getInt("ID"));
-        nutzer.setVorname(rs.getString("Vorname"));
-        nutzer.setNachname(rs.getString("Nachname"));
-
-        return nutzer;
+        try {
+            c = ConnectionHelper.getConnection();
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setInt(1, nutzer.getId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(termin.processRow(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionHelper.close(c);
+        }
+        return list;
     }
 
 
+    Termin processRow(ResultSet rs) throws SQLException {
+        Termin termin = new Termin();
+        termin.setId(rs.getInt("ID"));
+        termin.setBeschreibung(rs.getString("Beschreibung"));
+        termin.setOrt(rs.getString("Ort"));
+        termin.setVon(rs.getTimestamp("Von")); //TODO leellenorizni a getTimestamp Int-re mukodike-e
+        termin.setBis(rs.getTimestamp("Bis"));
 
+
+        return termin;
+    }
 }
-

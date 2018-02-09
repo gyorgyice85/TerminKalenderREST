@@ -1,7 +1,5 @@
 package Database;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
-
 import java.util.List;
 
 public class Nutzer{
@@ -41,6 +39,15 @@ public class Nutzer{
 
     public void setNachname(String nachname) {
         this.nachname = nachname;
+    }
+
+    @Override
+    public String toString() {
+        return "Nutzer{" +
+                "id=" + id +
+                ", vorname='" + vorname + '\'' +
+                ", nachname='" + nachname + '\'' +
+                '}';
     }
 
     /**

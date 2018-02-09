@@ -1,8 +1,6 @@
 package Database;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Termin {
@@ -19,6 +17,14 @@ public class Termin {
     public Termin(int id, Timestamp von, Timestamp bis, String ort, String beschreibung) {
 
         this.id = id;
+        this.von = von;
+        this.bis = bis;
+        this.ort = ort;
+        this.beschreibung = beschreibung;
+    }
+
+    public Termin(Timestamp von, Timestamp bis, String ort, String beschreibung) {
+
         this.von = von;
         this.bis = bis;
         this.ort = ort;
@@ -65,6 +71,16 @@ public class Termin {
         this.beschreibung = beschreibung;
     }
 
+    @Override
+    public String toString() {
+        return "Termin{" +
+                "id=" + id +
+                ", von=" + von +
+                ", bis=" + bis +
+                ", beschreibung='" + beschreibung + '\'' +
+                ", ort='" + ort + '\'' +
+                '}';
+    }
 
     /**
      * Methode um die eingeladenen Nutzer des Termins zurückzugeben
