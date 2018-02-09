@@ -1,7 +1,5 @@
 package database;
 
-import Database.Nutzer;
-import Database.NutzerDAO;
 import org.junit.Before;
 import org.junit.Test;
 
