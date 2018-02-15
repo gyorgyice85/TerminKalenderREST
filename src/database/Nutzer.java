@@ -17,6 +17,31 @@ public class Nutzer{
         this.nachname = nachname;
     }
 
+
+    /**
+     * Methode um die Termine, in denen der Nutzer Teilnehmer ist, zurueckzugeben
+     * @return Liste der Termine
+     */
+    public List<Termin> getTermine() {
+
+        TerminDAO termin = new TerminDAO();
+
+        return termin.getTermine(this);
+
+    }
+
+    /**
+     * Methode um die Termine, zu denen der Nutzer eingeladet ist, zurueckzugeben
+     * @return Liste der Termine
+     */
+    public List<Termin> getEinladungen() {
+
+        EinladungDAO einladung = new EinladungDAO();
+
+        return einladung.getEinladungen(this);
+
+    }
+
     public int getId() {
         return id;
     }
@@ -41,6 +66,7 @@ public class Nutzer{
         this.nachname = nachname;
     }
 
+
     @Override
     public String toString() {
         return "Nutzer{" +
@@ -48,29 +74,5 @@ public class Nutzer{
                 ", vorname='" + vorname + '\'' +
                 ", nachname='" + nachname + '\'' +
                 '}';
-    }
-
-    /**
-     * Methode um die Termine, in denen der Nutzer Teilnehmer ist, zurueckzugeben
-     * @return Liste der Termine
-     */
-    public List<Termin> getTermine() {
-
-        TerminDAO termin = new TerminDAO();
-
-        return termin.getTermine(this);
-
-    }
-
-    /**
-     * Methode um die Termine, zu denen der Nutzer eingeladet ist, zurueckzugeben
-     * @return Liste der Termine
-     */
-    public List<Termin> getEinladungen() {
-
-        EinladungDAO einladung = new EinladungDAO();
-
-        return einladung.getEinladungen(this);
-
     }
 }

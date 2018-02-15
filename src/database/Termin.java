@@ -31,6 +31,40 @@ public class Termin {
         this.beschreibung = beschreibung;
     }
 
+    @Override
+    public String toString() {
+        return "Termin{" +
+                "id=" + id +
+                ", von=" + von +
+                ", bis=" + bis +
+                ", beschreibung='" + beschreibung + '\'' +
+                ", ort='" + ort + '\'' +
+                '}';
+    }
+
+    /**
+     * Methode um die eingeladenen Nutzer des Termins zurückzugeben
+     * @return List<Nutzer> Liste der Teilnehmer
+     */
+    public List<Nutzer>getEingeladene(){
+
+        EinladungDAO einladung = new EinladungDAO();
+
+        return einladung.getEingeladene(this);
+
+    }
+
+    /**
+     * Methode um die Teilnehmer des Termins zurückzugeben
+     * @return List<Nutzer> Liste der Teilnehmer
+     */
+    public List<Nutzer>getTeilnehmer(){
+
+        TeilnehmerDAO teilnehmer = new TeilnehmerDAO();
+
+        return teilnehmer.getTeilnehmer(this);
+    }
+
     public int getId() {
         return id;
     }
@@ -69,39 +103,5 @@ public class Termin {
 
     public void setBeschreibung(String beschreibung) {
         this.beschreibung = beschreibung;
-    }
-
-    @Override
-    public String toString() {
-        return "Termin{" +
-                "id=" + id +
-                ", von=" + von +
-                ", bis=" + bis +
-                ", beschreibung='" + beschreibung + '\'' +
-                ", ort='" + ort + '\'' +
-                '}';
-    }
-
-    /**
-     * Methode um die eingeladenen Nutzer des Termins zurückzugeben
-     * @return List<Nutzer> Liste der Teilnehmer
-     */
-    public List<Nutzer>getEingeladene(){
-
-        EinladungDAO einladung = new EinladungDAO();
-
-        return einladung.getEingeladene(this);
-
-    }
-
-    /**
-     * Methode um die Teilnehmer des Termins zurückzugeben
-     * @return List<Nutzer> Liste der Teilnehmer
-     */
-    public List<Nutzer>getTeilnehmer(){
-
-        TeilnehmerDAO teilnehmer = new TeilnehmerDAO();
-
-        return teilnehmer.getTeilnehmer(this);
     }
 }

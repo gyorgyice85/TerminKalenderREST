@@ -9,20 +9,59 @@ import java.util.List;
 
 public class EinladungDAO {
 
+    /**
+     * Die Methode erstellt eine Einladung
+     * @param wer Nutzer, der anderen zum Termin einlädt
+     * @param wen der Eingeladene
+     * @param termin
+     */
     public void create(Nutzer wer, Nutzer wen, Termin termin){
-        //TODO
-        throw new UnsupportedOperationException("Not yet implemented");
+
+        Connection c = null;
+        PreparedStatement ps = null;
+        try {
+            c = ConnectionHelper.getConnection();
+            ps = c.prepareStatement("INSERT INTO Einladungen(WER, WEN, TERMIN) VALUES (?, ?, ?)");
+            ps.setInt(1, wer.getId());
+            ps.setInt(2, wen.getId());
+            ps.setInt(3, termin.getId());
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionHelper.close(c);
+        }
     }
 
+    /**
+     * Die Methode löscht die Einladung, die zum Eingeladene geschickt wurde
+     * @param wen die eingeladete Person
+     * @return
+     */
     public boolean remove(Nutzer wen, Termin termin){
-        //TODO
-        throw new UnsupportedOperationException("Not yet implemented");
+        Connection c = null;
+        try {
+            c = ConnectionHelper.getConnection();
+            PreparedStatement ps = c.prepareStatement
+                    ("DELETE FROM Einladungen WHERE WEN =? AND TERMIN = ?");
+            ps.setInt(1, wen.getId());
+            ps.setInt(2, termin.getId());
+            int count = ps.executeUpdate();
+            return count == 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionHelper.close(c);
+        }
     }
 
     /**
      * Durch die Methode wird der Eingeladene ein Teilnehmer des Termins sein.
      * Der Nutzer soll aus der Liste der Eingeladene geloescht werden.
-     * @param eingeladene
+     * @param eingeladene die eingeladete Person
      * @param termin
      */
     public void annehmen(Nutzer eingeladene, Termin termin){
@@ -32,8 +71,15 @@ public class EinladungDAO {
         remove(eingeladene, termin);
     }
 
+
+    /**
+     * Die Methode löscht den Eingeladene, der die Einladung abgelehnt hat.
+     * @param eingeladene die eingeladete Person
+     * @param termin
+     */
     public void ablehnen(Nutzer eingeladene, Termin termin) {
-        //TODO
+
+        remove(eingeladene,termin);
     }
 
     /**
@@ -95,6 +141,7 @@ public class EinladungDAO {
         }
         return list;
     }
+
 }
 
 
